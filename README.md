@@ -1,0 +1,1 @@
+A current tag plugin.
