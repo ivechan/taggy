@@ -1,8 +1,8 @@
-function Taggy_Key_Func(x, y)
+function! Taggy_Key_Func(x, y)
     return len(a:y['name']) - len(a:x['name'])
 endfunction
 
-function Taggy_CloseHandler(channel)
+function! Taggy_CloseHandler(channel)
     let l = []
     let b:taggy_dict = {}
     while ch_status(a:channel, {'part':'out'}) == 'buffered'
@@ -26,12 +26,12 @@ function Taggy_CloseHandler(channel)
     let b:taggy_isrunning = 0
 endfunction
 
-function Taggy_ErrHandler(channel, msg)
+function! Taggy_ErrHandler(channel, msg)
     let b:taggy_isrunning = 0
     echo 'Error from taggy channel.'
 endfunction
 
-function Taggy_Update_Vimscript()
+function! Taggy_Update_Vimscript()
     let filename = expand('%:p')
     if filename != '' && filereadable(filename)
         if exists('b:taggy_isrunning') && b:taggy_isrunning == 1
@@ -45,7 +45,7 @@ function Taggy_Update_Vimscript()
 
 endfunction
 
-function Taggy_Get_Current_Tag()
+function! Taggy_Get_Current_Tag()
     let filename = expand('%:p')
     if filename == '' || !filereadable(filename)
         return ''
