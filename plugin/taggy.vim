@@ -32,6 +32,11 @@ function! Taggy_ErrHandler(channel, msg)
 endfunction
 
 function! Taggy_Update_Vimscript()
+    let s:buftype = getbufvar(bufnr(), '&buftype', 'ERROR')
+    if !(s:buftype == '' || s:buftype == 'nowrite' || s:buftype == 'acwrite')
+        " Not a normal buffer, do not going on.
+        return
+    endif
     let filename = expand('%:p')
     if filename != '' && filereadable(filename)
         if exists('b:taggy_isrunning') && b:taggy_isrunning == 1
