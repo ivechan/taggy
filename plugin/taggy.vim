@@ -24,12 +24,8 @@ func! s:update_tags_info(job_buffer)
 endf
 
 function! s:ctags_stdout_cb_nvim(channel, data, event)
-    " read ctags output all.
-    let eof = (a:data == [''])
-    if eof
-        return
-    endif
-    call s:update_tags_info(a:data)
+    let s:chunks[-1] .= a:data[0]
+    call extend(s:chunks, a:data[1:])
 
 endfunction
 
@@ -48,6 +44,12 @@ func! s:exit_cb(channel, exit_status)
     let b:ctags_running = 0
 endf
 func! s:exit_cb_nvim(channel, data, event)
+    " read ctags output all.
+    " let eof = (a:data == [''])
+    " if eof
+    "     return
+    " endif
+    call s:update_tags_info(s:chunks)
     let b:ctags_running = 0
 endf
 
@@ -78,6 +80,7 @@ function! Tag_Update()
         let b:ctags_running = 1
         let cmd = ['ctags', '--fields=*','-f','-', '--extras=+q', '--output-format=json', filename ]
         if has('nvim')
+            let s:chunks = ['']
             let callbacks = {"on_stdout": function("s:ctags_stdout_cb_nvim"), 
                         \ 'on_stderr':function("s:ctags_err_cb_nvim"),
                         \ 'on_exit':function('s:exit_cb_nvim'),
